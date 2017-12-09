@@ -40,14 +40,6 @@ class Config
     public $imdbsite = 'www.imdb.com';
 
     /**
-     * Directory to store cached pages. This must be writable by the web
-     * server. It doesn't need to be under documentroot.
-     *
-     * @var string
-     */
-    public $cachedir = './cache/';
-
-    /**
      * Use cached pages if available?
      *
      * @var boolean
@@ -146,12 +138,6 @@ class Config
      */
     public function __construct($iniFile = null)
     {
-        // A little hack to maintain the old default behaviour of making sure the cache folder is
-        // within the imdbphp folder by default ('.' is the directory of the first php file loaded)
-        if ($this->cachedir === './cache/') {
-            $this->cachedir = __DIR__ . '/../../cache/';
-        }
-
         if ($iniFile) {
             $ini_files = [$iniFile];
         } else {
