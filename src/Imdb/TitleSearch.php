@@ -80,6 +80,7 @@ class TitleSearch extends MdbBase
      *
      * @return Title[] array of Title objects
      * @throws \Imdb\Exception\Http
+     * @throws \Imdb\Exception
      */
     public function search($searchTerms, $wantedTypes = null, $maxResults = null)
     {
@@ -97,7 +98,13 @@ class TitleSearch extends MdbBase
                     continue;
                 }
 
-                $results[] = Title::fromSearchResult($match['imdbid'], $match['title'], $match['year'], $type, $this->config, $this->logger,
+                $results[] = Title::fromSearchResult(
+                    $match['imdbid'],
+                    $match['title'],
+                    $match['year'],
+                    $type,
+                    $this->config,
+                    $this->logger,
                     $this->cache);
             }
         }

@@ -30,14 +30,14 @@ class Config
      *
      * @var string
      */
-    public $language = "";
+    public $language = '';
 
     /**
      * IMDB domain to use.
      *
      * @var string imdbsite
      */
-    public $imdbsite = "www.imdb.com";
+    public $imdbsite = 'www.imdb.com';
 
     /**
      * Directory to store cached pages. This must be writable by the web

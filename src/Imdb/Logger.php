@@ -119,7 +119,7 @@ class Logger implements LoggerInterface {
     if ($this->enabled) {
       $replace = array();
       foreach ($context as $key => $val) {
-          $replace['{' . $key . '}'] = "<pre>" . print_r($val, true) . "</pre>";
+          $replace['{' . $key . '}'] = '<pre>' . print_r($val, true) . '</pre>';
       }
 
       $message = strtr($message, $replace);

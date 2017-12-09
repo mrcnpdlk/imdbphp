@@ -27,18 +27,18 @@ class MdbBase extends Config
     public $version = '5.0.3';
 
     protected $months = [
-        "January"   => "01",
-        "February"  => "02",
-        "March"     => "03",
-        "April"     => "04",
-        "May"       => "05",
-        "June"      => "06",
-        "July"      => "07",
-        "August"    => "08",
-        "September" => "09",
-        "October"   => "10",
-        "November"  => "11",
-        "December"  => "12",
+        'January'   => '01',
+        'February'  => '02',
+        'March'     => '03',
+        'April'     => '04',
+        'May'       => '05',
+        'June'      => '06',
+        'July'      => '07',
+        'August'    => '08',
+        'September' => '09',
+        'October'   => '10',
+        'November'  => '11',
+        'December'  => '12',
     ];
 
     /**
@@ -61,6 +61,9 @@ class MdbBase extends Config
      */
     protected $pages;
 
+    /**
+     * @var array
+     */
     protected $page = [];
 
     /**
@@ -77,6 +80,7 @@ class MdbBase extends Config
      * @param Config          $config OPTIONAL override default config
      * @param LoggerInterface $logger OPTIONAL override default logger
      * @param CacheInterface  $cache  OPTIONAL override default cache
+     *
      */
     public function __construct(Config $config = null, LoggerInterface $logger = null, CacheInterface $cache = null)
     {
@@ -90,7 +94,7 @@ class MdbBase extends Config
 
         $this->config   = $config ?: $this;
         $this->logger   = $logger ?: new NullLogger();
-        $this->cache    = $cache ?? new Cache($this->config, $this->logger);
+        $this->cache    = $cache;
         $this->oAdapter = new Adapter($this->cache, $this->logger);
 
         $this->pages = new Pages($this->config, $this->cache, $this->logger);

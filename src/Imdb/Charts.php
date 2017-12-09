@@ -25,7 +25,7 @@ class Charts extends MdbBase
 {
     protected function buildUrl($context = null)
     {
-        return "http://" . $this->config->imdbsite . "/chart/";
+        return 'http://' . $this->config->imdbsite . '/chart/';
     }
 
     /**
@@ -93,7 +93,7 @@ class Charts extends MdbBase
      */
     public function getChartsTop10()
     {
-        $matchinit = "IMDb MOVIEmeter";
+        $matchinit = 'IMDb MOVIEmeter';
         $page      = $this->getPage();
         $offset    = strpos($page, $matchinit);
         $res       = [];

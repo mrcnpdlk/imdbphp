@@ -33,20 +33,23 @@ class Request {
   public function __construct($url, Config $config) {
     $this->config = $config;
     $this->ch = curl_init($url);
-    curl_setopt($this->ch, CURLOPT_ENCODING, "");
+    curl_setopt($this->ch, CURLOPT_ENCODING, '');
     curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, array(&$this, "callback_CURLOPT_HEADERFUNCTION"));
+    curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, array(&$this, 'callback_CURLOPT_HEADERFUNCTION'));
 
     $this->urltoopen = $url;
 
     $this->addHeaderLine('Referer', 'http://' . $config->imdbsite . '/');
 
-    if ($config->force_agent)
-      curl_setopt($this->ch, CURLOPT_USERAGENT, $config->force_agent);
-    else
-      curl_setopt($this->ch, CURLOPT_USERAGENT, $config->default_agent);
-    if ($config->language)
-      $this->addHeaderLine('Accept-Language', $config->language);
+    if ($config->force_agent) {
+        curl_setopt($this->ch, CURLOPT_USERAGENT, $config->force_agent);
+    }
+    else {
+        curl_setopt($this->ch, CURLOPT_USERAGENT, $config->default_agent);
+    }
+    if ($config->language) {
+        $this->addHeaderLine('Accept-Language', $config->language);
+    }
   }
 
   public function addHeaderLine ($name, $value) {
@@ -62,8 +65,9 @@ class Request {
     $this->responseHeaders = array();
     curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->requestHeaders);
     $this->page = curl_exec($this->ch);
-    if ($this->page !== false)
-      return true;
+    if ($this->page !== false) {
+        return true;
+    }
     if ($this->config->throwHttpExceptions) {
       throw new Exception\Http("Failed fetch url [$this->urltoopen] ".curl_error($this->ch));
     }
@@ -96,7 +100,7 @@ class Request {
     $headers = $this->getLastResponseHeaders();
     foreach ($headers as $head) {
       if (is_integer(strpos($head, $header))) {
-        $hstart = strpos($head, ": ");
+        $hstart = strpos($head, ': ');
         $head = trim(substr($head, $hstart + 2, 100));
         return $head;
       }
@@ -128,14 +132,15 @@ class Request {
     $status = $this->getStatus();
     if ($status == 301 || $status == 302 || $status == 303 || $status == 307) {
       foreach ($this->getLastResponseHeaders() as $header) {
-        if (strpos(trim(strtolower($header)), 'location') !== 0)
-          continue;
+        if (strpos(strtolower(trim($header)), 'location') !== 0) {
+            continue;
+        }
         $aline = explode(': ', $header);
         $target = trim($aline[1]);
         $urlParts = parse_url($target);
         if (!isset($urlParts['host'])) {
           $initialRequestUrlParts = parse_url($this->urltoopen);
-          $target = $initialRequestUrlParts['scheme'] . "://" . $initialRequestUrlParts['host'] . $target;
+          $target = $initialRequestUrlParts['scheme'] . '://' . $initialRequestUrlParts['host'] . $target;
         }
         return $target;
       }

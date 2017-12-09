@@ -4,6 +4,7 @@ namespace Imdb;
 
 use mrcnpdlk\Psr16Cache\Adapter;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -41,11 +42,11 @@ class Pages
      * @param CacheInterface  $cache
      * @param LoggerInterface $logger
      */
-    public function __construct(Config $config, CacheInterface $cache, LoggerInterface $logger)
+    public function __construct(Config $config, CacheInterface $cache = null, LoggerInterface $logger = null)
     {
         $this->config   = $config;
         $this->cache    = $cache;
-        $this->logger   = $logger;
+        $this->logger   = $logger ?? new NullLogger();
         $this->oAdapter = new Adapter($this->cache, $this->logger);
     }
 
@@ -66,26 +67,29 @@ class Pages
      * @param $url
      *
      * @return string
-     * @throws \Imdb\Exception\Http
      */
     public function get($url): string
     {
-        if (!empty($this->pages[$url])) {
+        try {
+            if (!empty($this->pages[$url])) {
+                return $this->pages[$url];
+            }
+
+            $this->pages[$url] = $this->oAdapter->useCache(
+                function () use ($url) {
+                    return $this->requestPage($url);
+                },
+                [$this->getCacheKey($url)],
+                1
+            );
+
             return $this->pages[$url];
+        } catch (\Exception $e) {
+            $this->logger->warning($e->getMessage());
+
+            return '';
         }
 
-        if ($this->pages[$url] = $this->getFromCache($url)) {
-            return $this->pages[$url];
-        }
-
-        if ($this->pages[$url] = $this->requestPage($url)) {
-            $this->saveToCache($url, $this->pages[$url]);
-
-            return $this->pages[$url];
-        }
-
-// failed to get page
-        return '';
     }
 
     /**
@@ -99,11 +103,6 @@ class Pages
         $cacheKey = $urlParts['path'] . (isset($urlParts['query']) ? '?' . $urlParts['query'] : '');
 
         return trim($cacheKey, '/');
-    }
-
-    protected function getFromCache($url)
-    {
-        return $this->cache->get($this->getCacheKey($url));
     }
 
     /**
@@ -137,7 +136,7 @@ class Pages
             return $this->requestPage($redirectUrl);
         }
 
-        $this->logger->error("[Page] Failed to retrieve url [{url}]. Response headers:{headers}",
+        $this->logger->error('[Page] Failed to retrieve url [{url}]. Response headers:{headers}',
             ['url' => $url, 'headers' => $req->getLastResponseHeaders()]);
         if ($this->config->throwHttpExceptions) {
             $exception                 = new Exception\Http("Failed to retrieve url [$url]. Status code [{$req->getStatus()}]");
@@ -146,11 +145,6 @@ class Pages
         }
 
         return '';
-    }
-
-    protected function saveToCache($url, $page)
-    {
-        $this->cache->set($this->getCacheKey($url), $page);
     }
 
 }

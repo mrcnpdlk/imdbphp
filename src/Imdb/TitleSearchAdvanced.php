@@ -43,7 +43,7 @@ class TitleSearchAdvanced extends MdbBase {
   const SORT_US_BOX_OFFICE_GROSS = 'boxoffice_gross_us';
 
   protected $titleTypes = array();
-  protected $year = null;
+  protected $year;
   protected $countries = array();
   protected $languages = array();
   protected $sort = 'moviemeter';
@@ -136,7 +136,7 @@ class TitleSearchAdvanced extends MdbBase {
       $queries['sort'] = $this->sort;
     }
 
-    return "http://" . $this->imdbsite . '/search/title?' . http_build_query($queries);
+    return 'http://' . $this->imdbsite . '/search/title?' . http_build_query($queries);
   }
 
     /**
