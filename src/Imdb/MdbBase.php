@@ -135,7 +135,6 @@ class MdbBase extends Config
      * @param string $context Name of the page or some other context to build the URL with to retrieve the page
      *
      * @return string
-     * @throws \Imdb\Exception\Http
      */
     protected function getPage($context = null)
     {

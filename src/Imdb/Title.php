@@ -150,7 +150,6 @@ class Title extends MdbBase
      * @param LoggerInterface $logger OPTIONAL override default logger
      * @param CacheInterface  $cache  OPTIONAL override default cache
      *
-     * @throws \Imdb\Exception
      */
     public function __construct($id, Config $config = null, LoggerInterface $logger = null, CacheInterface $cache = null)
     {
@@ -170,7 +169,6 @@ class Title extends MdbBase
      * @param CacheInterface  $cache  OPTIONAL override default cache
      *
      * @return Title
-     * @throws \Imdb\Exception
      */
     public static function fromSearchResult(
         $id,
