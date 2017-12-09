@@ -126,11 +126,14 @@ class MdbBase extends Config {
     return @$this->months[$mon];
   }
 
-  /**
-   * Get a page from IMDb, which will be cached in memory for repeated use
-   * @param string $context Name of the page or some other context to build the URL with to retrieve the page
-   * @return string
-   */
+    /**
+     * Get a page from IMDb, which will be cached in memory for repeated use
+     *
+     * @param string $context Name of the page or some other context to build the URL with to retrieve the page
+     *
+     * @return string
+     * @throws \Imdb\Exception\Http
+     */
   protected function getPage($context = null) {
     return $this->pages->get($this->buildUrl($context));
   }

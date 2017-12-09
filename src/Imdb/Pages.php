@@ -36,11 +36,15 @@ class Pages {
     $this->logger = $logger;
   }
 
-  /**
-   * Retrieve the content of the specified $url
-   * Caching will be used where possible
-   * @return string
-   */
+    /**
+     * Retrieve the content of the specified $url
+     * Caching will be used where possible
+     *
+     * @param $url
+     *
+     * @return string
+     * @throws \Imdb\Exception\Http
+     */
   public function get($url) {
     if (!empty($this->pages[$url])) {
       return $this->pages[$url];
@@ -53,10 +57,10 @@ class Pages {
     if ($this->pages[$url] = $this->requestPage($url)) {
       $this->saveToCache($url, $this->pages[$url]);
       return $this->pages[$url];
-    } else {
-      // failed to get page
-      return '';
     }
+
+// failed to get page
+      return '';
   }
 
   /**
@@ -72,26 +76,28 @@ class Pages {
       $this->logger->error("[Page] Failed to connect to server when requesting url [$url]");
       if ($this->config->throwHttpExceptions) {
         throw new Exception\Http("Failed to connect to server when requesting url [$url]");
-      } else {
-        return '';
       }
+
+        return '';
     }
 
-    if (200 == $req->getStatus()) {
-        return $req->getResponseBody();
-    } elseif ($redirectUrl = $req->getRedirect()) {
-        $this->logger->debug("[Page] Following redirect from [$url] to [$redirectUrl]");
-        return $this->requestPage($redirectUrl);
-    } else {
-        $this->logger->error("[Page] Failed to retrieve url [{url}]. Response headers:{headers}", array('url' => $url, 'headers' => $req->getLastResponseHeaders()));
-        if ($this->config->throwHttpExceptions) {
-          $exception = new Exception\Http("Failed to retrieve url [$url]. Status code [{$req->getStatus()}]");
-          $exception->HTTPStatusCode = $req->getStatus();
-          throw new $exception;
-        } else {
-          return '';
-        }
-    }
+      if (200 == $req->getStatus()) {
+          return $req->getResponseBody();
+      }
+
+      if ($redirectUrl = $req->getRedirect()) {
+          $this->logger->debug("[Page] Following redirect from [$url] to [$redirectUrl]");
+          return $this->requestPage($redirectUrl);
+      }
+
+      $this->logger->error("[Page] Failed to retrieve url [{url}]. Response headers:{headers}", array('url' => $url, 'headers' => $req->getLastResponseHeaders()));
+      if ($this->config->throwHttpExceptions) {
+        $exception = new Exception\Http("Failed to retrieve url [$url]. Status code [{$req->getStatus()}]");
+        $exception->HTTPStatusCode = $req->getStatus();
+        throw new $exception;
+      }
+
+      return '';
   }
 
   protected function getFromCache($url) {

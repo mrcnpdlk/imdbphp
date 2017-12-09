@@ -13,12 +13,15 @@ class PersonSearch extends MdbBase {
   var $name = null;
   var $resu = array();
 
-  /**
-   * Search for people on imdb who match $searchTerms
-   * @method search
-   * @param string $searchTerms
-   * @return Person[]
-   */
+    /**
+     * Search for people on imdb who match $searchTerms
+     * @method search
+     *
+     * @param string $searchTerms
+     *
+     * @return Person[]
+     * @throws \Imdb\Exception\Http
+     */
   public function search($searchTerms) {
     $this->setsearchname($searchTerms);
     $this->reset();
@@ -43,11 +46,12 @@ class PersonSearch extends MdbBase {
     $this->resu = array();
   }
 
-  /**
-   * Setup search results
-   * @param optional string URL Replace search URL by your own
-   * @return Person[]
-   */
+    /**
+     * Setup search results
+     *
+     * @return Person[]
+     * @throws \Imdb\Exception\Http
+     */
   public function results() {
     $page = $this->getPage();
 
@@ -80,10 +84,13 @@ class PersonSearch extends MdbBase {
     return $this->resu;
   }
 
-  /**
-   * Create the IMDB URL for the name search
-   * @return string url
-   */
+    /**
+     * Create the IMDB URL for the name search
+     *
+     * @param null $context
+     *
+     * @return string url
+     */
   protected function buildUrl($context = null) {
     return "http://" . $this->imdbsite . "/find?q=" . urlencode($this->name) . "&s=nm";
   }

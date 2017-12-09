@@ -130,13 +130,15 @@ class Person extends MdbBase {
   }
 
  #--------------------------------------------------------[ Photo specific ]---
-  /** Get cover photo
-   * @method photo
-   * @param optional boolean thumb get the thumbnail (100x140, default) or the
-   *        bigger variant (400x600 - FALSE)
-   * @return mixed photo (string url if found, FALSE otherwise)
-   * @see IMDB person page / (Main page)
-   */
+
+    /** Get cover photo
+     * @method photo
+     *
+     * @param bool $thumb
+     *
+     * @return mixed photo (string url if found, FALSE otherwise)
+     * @see IMDB person page / (Main page)
+     */
   public function photo($thumb=true) {
     if (empty($this->main_photo)) {
       $this->getPage("Name");
@@ -151,14 +153,17 @@ class Person extends MdbBase {
   }
 
 
-  /**
-   * Save the photo to disk
-   * @param string path where to store the file
-   * @param optional boolean thumb get the thumbnail (100x140, default) or the
-   *        bigger variant (400x600 - FALSE)
-   * @return boolean success
-   * @see IMDB person page / (Main page)
-   */
+    /**
+     * Save the photo to disk
+     *
+     * @param string path where to store the file
+     * @param bool $thumb
+     * @param bool $rerun
+     *
+     * @return boolean success
+     * @throws \Imdb\Exception\Http
+     * @see IMDB person page / (Main page)
+*/
   public function savephoto($path,$thumb=TRUE,$rerun=FALSE) {
     $photo_url = $this->photo ($thumb);
     if (!$photo_url) return FALSE;
@@ -172,10 +177,11 @@ class Person extends MdbBase {
         if ($rerun) {
             $this->debug_scalar("<BR>*photoerror* at ".__FILE__." line ".__LINE__. ": ".$photo_url.": Content Type is '".$req->getResponseHeader("Content-Type")."'<BR>");
             return FALSE;
-        } else {
-            $this->debug_scalar("<BR>Initiate second run for photo '$path'<BR>");
-            return $this->savephoto($path,$thumb,TRUE);
         }
+
+        $this->debug_scalar("<BR>Initiate second run for photo '$path'<BR>");
+
+        return $this->savephoto($path,$thumb,TRUE);
     }
     $fp2 = fopen ($path, "w");
     if ((!$fp) || (!$fp2)){
@@ -186,13 +192,13 @@ class Person extends MdbBase {
     return TRUE;
   }
 
-  /** Get the URL for the movies cover photo
-   * @method photo_localurl
-   * @param optional boolean thumb get the thumbnail (100x140, default) or the
-   *        bigger variant (400x600 - FALSE)
-   * @return mixed url (string URL or FALSE if none)
-   * @see IMDB person page / (Main page)
-   */
+    /** Get the URL for the movies cover photo
+     * @method photo_localurl
+     * @param bool $thumb
+     * @return mixed url (string URL or FALSE if none)
+     * @throws \Imdb\Exception\Http
+     * @see IMDB person page / (Main page)
+*/
   public function photo_localurl($thumb=true){
     if ($thumb) $ext = ""; else $ext = "_big";
     if (!is_dir($this->photodir)) {
@@ -826,10 +832,11 @@ class Person extends MdbBase {
     return $this->SearchDetails;
   }
 
-  /**
-   * @param string $pageName internal name of the page
-   * @return string
-   */
+    /**
+     * @param string $pageName internal name of the page
+     * @return string
+     * @throws \Exception
+*/
   protected function getUrlSuffix($pageName) {
    switch ($pageName) {
     case "Name"        : $urlname="/"; break;

@@ -93,19 +93,21 @@ class TitleSearchAdvanced extends MdbBase {
     $this->sort = $sort;
   }
 
-  /**
-   * Perform the search
-   * @return array
-   * array('imdbid' => $id,
-   *  'title' => $title,
-   *  'year' => $year,
-   *  'type' => $mtype,              e.g. 'TV Series', 'Feature Film' ..
-   *  'serial' => $is_serial,        Is it a TV Series?
-   *  'episode_imdbid' => $ep_id,    If the search found an episode it will show as type TV Series but have episode information too
-   *  'episode_title' => $ep_name,   As above. The title of the episode
-   *  'episode_year' => $ep_year     As above. The year of the episode
-   * )
-   */
+    /**
+     * Perform the search
+     *
+     * @return array
+     * array('imdbid' => $id,
+     *  'title' => $title,
+     *  'year' => $year,
+     *  'type' => $mtype,              e.g. 'TV Series', 'Feature Film' ..
+     *  'serial' => $is_serial,        Is it a TV Series?
+     *  'episode_imdbid' => $ep_id,    If the search found an episode it will show as type TV Series but have episode information too
+     *  'episode_title' => $ep_name,   As above. The title of the episode
+     *  'episode_year' => $ep_year     As above. The year of the episode
+     * )
+     * @throws \Imdb\Exception\Http
+     */
   public function search() {
     $page = $this->getPage('');
     return $this->parse_results($page);
@@ -137,9 +139,11 @@ class TitleSearchAdvanced extends MdbBase {
     return "http://" . $this->imdbsite . '/search/title?' . http_build_query($queries);
   }
 
-  /**
-   * @param string html of page
-   */
+    /**
+     * @param string html of page
+     *
+     * @return array
+     */
   protected function parse_results($page) {
     $doc = new \DOMDocument();
     @$doc->loadHTML('<?xml encoding="UTF-8">'.$page);
