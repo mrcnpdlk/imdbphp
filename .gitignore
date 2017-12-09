@@ -2,6 +2,7 @@
 /vendor
 /cache
 /demo/images
+/devel/
 ### Composer template
 composer.phar
 /vendor/

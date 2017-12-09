@@ -16,9 +16,14 @@ class TitleSearch extends MdbBase
     const VIDEO          = Title::VIDEO;
     const SHORT          = Title::SHORT;
 
-    protected function buildUrl($searchTerms = null)
+    /**
+     * @param null $searchTerms
+     *
+     * @return string
+     */
+    protected function buildUrl($searchTerms = null): string
     {
-        return "http://" . $this->imdbsite . "/find?s=tt&q=" . urlencode($searchTerms);
+        return 'http://' . $this->imdbsite . '/find?s=tt&q=' . urlencode($searchTerms);
     }
 
     protected function parseTitleType($string)

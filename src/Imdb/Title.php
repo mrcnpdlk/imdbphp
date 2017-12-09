@@ -12,6 +12,7 @@
 namespace Imdb;
 
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * A title on IMDb
@@ -260,7 +261,7 @@ class Title extends MdbBase
      * @return array Alternate Version (array[0..n] of string)
      * @see IMDB page /alternateversions
      */
-    public function alternateVersions()
+    public function alternateVersions(): array
     {
         if (empty($this->moviealternateversions)) {
             $page = $this->getPage('AlternateVersions');
@@ -285,7 +286,7 @@ class Title extends MdbBase
      * @return string ratio e.g. "2.35 : 1" or "" if there is no aspect ratio on imdb
      * @see IMDB page / (TitlePage)
      */
-    public function aspect_ratio()
+    public function aspect_ratio(): string
     {
         if (empty($this->aspectratio)) {
             $page = $this->getPage("Title");
@@ -325,7 +326,7 @@ class Title extends MdbBase
      *  ]</pre>
      * @see IMDB page /awards
      */
-    public function awards($compat = true)
+    public function awards($compat = true): array
     {
         if (empty($this->awards)) {
             $this->getPage("Awards");
@@ -412,7 +413,13 @@ class Title extends MdbBase
         return $this->budget;
     }
 
-    protected function buildUrl($page = null)
+    /**
+     * @param null $page
+     *
+     * @return string
+     * @throws \Exception
+     */
+    protected function buildUrl($page = null): string
     {
         return "http://" . $this->imdbsite . "/title/tt" . $this->imdbID . $this->getUrlSuffix($page);
     }
@@ -1132,12 +1139,12 @@ class Title extends MdbBase
 
     /** Get admissions budget
      *
-     * @param ref string listAdmissions
+     * @param string listAdmissions
      *
-     * @return array[0..n] of array[value,country,date]
+     * @return array Return array[0..n] of array[value,country,date]
      * @see IMDB page / (TitlePage)
      */
-    protected function get_admissions(&$listAdmissions)
+    protected function get_admissions(&$listAdmissions): array
     {
         $result = [];
         $temp   = $listAdmissions;
@@ -1187,8 +1194,11 @@ class Title extends MdbBase
         return $result;
     }
 
-    #---------------------------------------------------------------[ Seasons ]---
-
+    /**
+     * @param $budg
+     *
+     * @return int|null
+     */
     protected function get_budget($budg)
     {
         // Tries to get a single entry
@@ -1244,13 +1254,13 @@ class Title extends MdbBase
 
     /** Get filming dates
      *
-     * @param ref string listFilmingDates
+     * @param string listFilmingDates
      *
-     * @return array[0..n] of array[beginning,end]
+     * @return array Return array[0..n] of array[beginning,end]
      * Time format : YYYY-MM-DD
      * @see IMDB page / (TitlePage)
      */
-    protected function get_filmingDates($listFilmingDates)
+    protected function get_filmingDates($listFilmingDates): array
     {
         $temp = $listFilmingDates;
 
@@ -1299,9 +1309,9 @@ class Title extends MdbBase
 
     /** Get gross budget
      *
-     * @param ref string listGross
+     * @param string listGross
      *
-     * @return array[0..n] of array[value,country,date]
+     * @return array Return array[0..n] of array[value,country,date]
      * @see IMDB page / (TitlePage)
      */
     protected function get_gross(&$listGross)
@@ -1370,7 +1380,7 @@ class Title extends MdbBase
 
     /** Get opening weekend budget
      *
-     * @param ref string listOpening
+     * @param string listOpening
      *
      * @return array[0..n] of array[value,country,date,nbScreens]
      * @see IMDB page
@@ -1457,9 +1467,9 @@ class Title extends MdbBase
      * @return array|false rows (FALSE if table not found, array[0..n] of strings otherwise)
      * @see used by the methods director, cast, writing, producer, composer
      */
-    protected function get_table_rows($html, $table_start)
+    protected function get_table_rows(string $html, string $table_start)
     {
-        if ($table_start == "Writing Credits" || $table_start == "Series Writing Credits") {
+        if ($table_start === "Writing Credits" || $table_start === "Series Writing Credits") {
             $row_s = strpos($html, ">" . $table_start);
         } else {
             $row_s = strpos($html, ">" . $table_start . "&nbsp;<");
@@ -1508,7 +1518,7 @@ class Title extends MdbBase
 
     /** Get weekend gross budget
      *
-     * @param ref string listweekendGross
+     * @param string listweekendGross
      *
      * @return array[0..n] of array[value,country,date,nbScreens]
      * @see IMDB page / (TitlePage)
@@ -1569,7 +1579,8 @@ class Title extends MdbBase
         return $result;
     }
 
-    /** Get the goofs
+    /**
+     * Get the goofs
      * @method goofs
      *
      * @return array goofs (array[0..n] of array[type,content]
@@ -1648,7 +1659,7 @@ class Title extends MdbBase
      * @return boolean
      * @see IMDB page / (TitlePage)
      */
-    public function is_serial()
+    public function is_serial(): bool
     {
         if (isset($this->isSerial)) {
             return $this->isSerial;
@@ -1657,7 +1668,8 @@ class Title extends MdbBase
         return $this->isSerial = (bool)preg_match('|href="/title/tt\d{7}/episodes\?|i', $this->getPage("Title"));
     }
 
-    /** Get the keywords for the movie
+    /**
+     * Get the keywords for the movie
      * @method keywords
      *
      * @return array keywords
@@ -1675,7 +1687,8 @@ class Title extends MdbBase
         return $this->main_keywords;
     }
 
-    /** Get the complete keywords for the movie
+    /**
+     * Get the complete keywords for the movie
      * @method keywords_all
      *
      * @return array keywords
@@ -1695,12 +1708,12 @@ class Title extends MdbBase
 
     #-------------------------------------------------[ Country of Production ]---
 
-    /** Get movies original language
+    /**
+     * Get movies original language
      * @method language
      *
      * @return string language
-     * @brief There is not really a main language on the IMDB sites (yet), so this
-     *  simply returns the first one
+     * @brief There is not really a main language on the IMDB sites (yet), so this simply returns the first one
      * @see   IMDB page / (TitlePage)
      */
     public function language()
