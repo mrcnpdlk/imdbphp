@@ -79,8 +79,7 @@ class Pages
                 function () use ($url) {
                     return $this->requestPage($url);
                 },
-                [$this->getCacheKey($url)],
-                1
+                [$this->getCacheKey($url)]
             );
 
             return $this->pages[$url];
