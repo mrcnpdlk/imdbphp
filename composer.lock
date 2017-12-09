@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a66931c05f4dd06131cb7f840bdc686",
+    "content-hash": "facfe524e9b47ef797e493fa5f768f5c",
     "packages": [
         {
             "name": "mrcnpdlk/psr16cache-adapter",

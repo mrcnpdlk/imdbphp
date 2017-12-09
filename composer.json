@@ -1,7 +1,18 @@
 {
-  "name": "imdbphp/imdbphp",
+  "name": "mrcnpdlk/imdbphp",
   "description": "Library for retrieving film and tv information from IMDb",
   "license": "GPL-2.0",
+  "keywords": [
+    "imdb"
+  ],
+  "authors": [
+    {
+      "name": "Marcin Pudełek",
+      "email": "marcin@pudelek.org.pl",
+      "homepage": "https://www.linkedin.com/in/mrcnpdlk/",
+      "role": "Developer"
+    }
+  ],
   "autoload": {
     "psr-4": {
       "Imdb\\": "src/Imdb"
